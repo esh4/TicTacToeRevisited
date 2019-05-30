@@ -31,6 +31,7 @@ class GameBoard:
         board = self.get_board()
 
         # TODO: this is crap! these two loops are practically identical
+        # identical row
         for col in range(self.size[0]):
             piece = board[0][col]
             in_a_row = 0
@@ -42,6 +43,7 @@ class GameBoard:
             if in_a_row == self.size[0]:
                 return True, piece
 
+        # identical column
         for row in range(self.size[0]):
             piece = board[row][0]
             in_a_row = 0
@@ -52,6 +54,28 @@ class GameBoard:
                     in_a_row += 1
             if in_a_row == self.size[0]:
                 return True, piece
+
+        # diagonal
+        in_a_row = 0
+        piece = board[0][0]
+        for i in range(self.size[0]):
+            if piece == ' ':
+                break
+            elif board[i][i] == piece:
+                in_a_row += 1
+        if in_a_row == self.size[0]:
+            return True, piece
+
+        # other diagonal
+        in_a_row = 0
+        piece = board[2][0]
+        for i in range(self.size[0]):
+            if piece == ' ':
+                break
+            elif board[self.size[0] - 1 - i][i] == piece:
+                in_a_row += 1
+        if in_a_row == self.size[0]:
+            return True, piece
 
         return False, None
 
