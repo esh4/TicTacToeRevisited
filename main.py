@@ -1,13 +1,27 @@
 from GameManager import GameManager
 from HumanPlayer import HumanPlayer
 from MinMaxPlayer import MinMaxPlayer
+from GameBoard import GameBoard
+
+p2 = MinMaxPlayer('mm')
+g = GameBoard(preset=[['X', 'X', 'X'], ['O', 'O', 'X'], ['X', ' ', 'O']])
+
+print(g.is_game_over())
+# print(p2.score_move(g, (2,1)))
+
+
+
+
 
 
 p1 = HumanPlayer('e0')
-p2 = HumanPlayer('s')
 
 gm = GameManager(p1, p2)
 
-while not gm.is_game_over():
+game_over, winner = False, None
+while not game_over:
     gm.take_turn()
+    game_over, winner = gm.is_game_over()
 
+print(gm.board)
+print(winner)
