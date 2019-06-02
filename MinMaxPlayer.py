@@ -11,56 +11,41 @@ class MinMaxPlayer(Player):
     def take_turn(self, board):
         return {self.calculate_best_move(board): self.mark}
 
-    def calculate_best_move(self, board: GameBoard) -> int:
-        # find all available moves
-        moves = []
-        for move in self.find_available_moves(board):
-            moves.append((move, self.score_move(board, move)))
+    def calculate_best_move(self, board: GameBoard):
+        return self.score_move(board)[0]
 
-        print(moves)
-
-        best_move = ()
-        max_score = -10
-        for move in moves:
-            if move[1] > max_score:
-                best_move = move[0]
-                max_score = move[1]
-
-        return best_move
-
-    def score_move(self, board: GameBoard, move, my_team_index=0, recursion_level=1):
+    def score_move(self, board: GameBoard, my_team_index=0, recursion_level=0):
         teams = ['O', 'X']
-        new_board = board.insert_game_piece({move: teams[my_team_index]})
-        game_over, winner = new_board.is_game_over()
+        game_over, winner = board.is_game_over()
         if game_over:
             if winner == 'O':
-                return 10 - recursion_level
+                return None, 100 - recursion_level
             elif winner == 'X':
-                return -10 + recursion_level
+                return None, -100 + recursion_level
             else:
-                return 0
+                return None, 0
         else:   # current board has no score so we score recursively
             move_scores = []
-            for move in self.find_available_moves(new_board):
-                to_insert = {move: teams[abs(my_team_index - 1)]}
-                # print(to_insert)
-                new_board = new_board.insert_game_piece(to_insert)
-                score = self.score_move(new_board, move, my_team_index=abs(my_team_index - 1),
-                                        recursion_level=recursion_level+1)
-                move_scores.append(score)
+            for move in self.find_available_moves(board):
+                to_insert = {move: teams[my_team_index]}
+                child_board = board.insert_game_piece(to_insert)
+                score = self.score_move(child_board, my_team_index=abs(my_team_index - 1),
+                                        recursion_level=recursion_level+1)[1]
+                move_scores.append((move, score))
 
             min_max_score = move_scores[0]
-            for score in move_scores:
-                if my_team_index == 0:
-                    if score > min_max_score:
-                        # print(score)
-                        min_max_score = score
-                elif my_team_index == 1:
-                    if score < min_max_score:
-                        min_max_score = score
-                        # print(score)
-                else:
-                    print('BIG UH OH!')
+            if recursion_level == 0:
+                print(move_scores)
+                print(min_max_score)
+
+            for move_score in move_scores:
+                # print(move_score, min_max_score, my_team_index == 0)
+                if my_team_index == 0:  # maximizing
+                    if move_score[1] > min_max_score[1]:
+                        min_max_score = move_score
+                elif my_team_index == 1:    # minimizing
+                    if move_score[1] < min_max_score[1]:
+                        min_max_score = move_score
 
             return min_max_score
 

@@ -4,12 +4,6 @@ from MinMaxPlayer import MinMaxPlayer
 from GameBoard import GameBoard
 
 p2 = MinMaxPlayer('mm')
-g = GameBoard()
-
-print(g.is_game_over())
-# print(p2.score_move(g, (2,1)))
-
-
 p1 = HumanPlayer('e0')
 
 gm = GameManager(p1, p2)
