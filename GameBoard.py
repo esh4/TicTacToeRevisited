@@ -1,5 +1,6 @@
 import copy
 
+
 class GameBoard:
     teams = ['X', 'O']
 

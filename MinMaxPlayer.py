@@ -31,38 +31,38 @@ class MinMaxPlayer(Player):
     def score_move(self, board: GameBoard, move, my_team_index=0, recursion_level=1):
         teams = ['O', 'X']
         new_board = board.insert_game_piece({move: teams[my_team_index]})
-        # print(recursion_level)
         game_over, winner = new_board.is_game_over()
         if game_over:
             if winner == 'O':
-                return 10 / recursion_level
+                return 10 - recursion_level
             elif winner == 'X':
-                return -10 / recursion_level
+                return -10 + recursion_level
             else:
                 return 0
-        else:
-            moves = []
+        else:   # current board has no score so we score recursively
+            move_scores = []
             for move in self.find_available_moves(new_board):
                 to_insert = {move: teams[abs(my_team_index - 1)]}
                 # print(to_insert)
                 new_board = new_board.insert_game_piece(to_insert)
                 score = self.score_move(new_board, move, my_team_index=abs(my_team_index - 1),
                                         recursion_level=recursion_level+1)
-                moves.append(score)
+                move_scores.append(score)
 
-            max_score = moves[0]
-            for score in moves:
+            min_max_score = move_scores[0]
+            for score in move_scores:
                 if my_team_index == 0:
-                    if score > max_score:
+                    if score > min_max_score:
                         # print(score)
-                        max_score = score
+                        min_max_score = score
                 elif my_team_index == 1:
-                    if score < max_score:
-                        max_score = score
+                    if score < min_max_score:
+                        min_max_score = score
                         # print(score)
+                else:
+                    print('BIG UH OH!')
 
-            return max_score
-
+            return min_max_score
 
     def find_available_moves(self, board: GameBoard):
         ret = []
@@ -71,4 +71,6 @@ class MinMaxPlayer(Player):
                 if board.get_board()[row][col] == ' ':
                     ret.append((row, col))
         return ret
+
+
 
